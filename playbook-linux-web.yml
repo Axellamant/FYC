@@ -1,0 +1,71 @@
+---
+- hosts: linux_web
+  gather_facts: no
+  tasks:
+
+  - name: Install httpd service
+    yum: 
+      name: httpd 
+      state: latest
+  - name: Install httpd utils
+    yum:
+      name: httpd-tools
+
+  - name: Create web content file
+    copy:
+      src: /etc/ansible/scripts/auto_creation_service/confs/apache/ansible-website.html
+      dest: /var/www/html/index.html
+
+
+  - name: firewall enabled and running
+    service:
+      enabled: true
+      name: firewalld
+      state: started
+ 
+  - name: firewalld persists httpd service
+    firewalld:
+      immediate: yes
+      permanent: true
+      service: http
+      state: enabled
+
+
+  - name: httpd enabled and running
+    service:
+      name: httpd
+      state: started
+      enabled: true
+
+  - name: Install postfix
+    yum:
+      name: postfix
+      state: latest
+
+  - name: Postfix configuration
+    copy:
+      src: /etc/ansible/scripts/auto_creation_service/confs/postfix/main.cf
+      dest: /etc/postfix/main.cf
+
+
+  - name: Postfix enabled and running
+    service:
+      name: postfix
+      state: started
+      enabled: true
+
+
+  - name: Linux network configuration
+    copy:
+      src: /etc/ansible/scripts/auto_creation_service/confs/network/network_template.tmp
+      dest: /etc/sysconfig/network-scripts/ifcfg-ens192
+
+
+  - name: Restart network service
+    async: 30
+    poll: 0     
+    service:
+      name: network
+      state: restarted
+      enabled: true
+

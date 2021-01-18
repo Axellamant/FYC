@@ -1,0 +1,30 @@
+---
+- name: Create VM
+  hosts: localhost
+
+  vars:
+    vcenter_hostname: 192.168.120.6
+    esxi_hostname: 51.159.57.135
+    vcenter_user: admin_ansible@vsphere.local
+    esxi_datastore: Datastore1
+    esxi_password: Espoir15!
+    vm_name: CLT-WinAdmin
+    template: template-win10
+    vm_notes: Created by Ansible
+
+
+  tasks:
+  - name: Create VM
+    vmware_guest:
+      hostname: '{{ vcenter_hostname }}'
+      esxi_hostname: '{{ esxi_hostname }}'
+      username: '{{ vcenter_user }}'
+      password: '{{ esxi_password }}'
+      datacenter: TOPACHAT
+      template: '{{ template }}'
+      name: '{{ vm_name }}'
+      folder: /
+      annotation: '{{ vm_notes }}'
+      validate_certs: no
+      state: poweredon
+

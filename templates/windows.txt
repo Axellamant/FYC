@@ -1,0 +1,42 @@
+---
+- hosts: windows
+  gather_facts: no
+  tasks:
+
+  - name: Create windows user
+    win_user:
+      name: admin-fyc
+      password: espoir15
+      state: present
+      groups:
+        - Administrateurs
+  - name: Install google chrome
+    win_chocolatey:
+      name: googlechrome
+      state: present
+  - name: Install firefox
+    win_chocolatey:
+      name: firefox
+      state: present
+  - name: Install winscp
+    win_chocolatey:
+      name: winscp
+      state: present
+  - name: Install notepad++
+    win_chocolatey:
+      name: notepadplusplus
+      state: present
+  - name: Install putty
+    win_chocolatey:
+      name: putty
+      state: present
+  - name: Updates all packages
+    win_chocolatey:
+      name: all
+      state: latest
+
+
+  - name: run a cmd command
+    async: 30
+    poll: 0
+    win_command: cmd.exe /c netsh interface ipv4 set address name="Ethernet0" static /IP/ 255.255.255.0 192.168.120.2
